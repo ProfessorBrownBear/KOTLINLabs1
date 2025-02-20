@@ -1,0 +1,48 @@
+class Course(val courseName: String, val courseCode: String) {
+    fun getDetails(): String {
+        return "$courseCode: $courseName"
+    }
+
+}
+
+class Student(val name: String, private var age: Int, var major: String) {
+    private val enrolledCourses = mutableListOf<Course>()
+
+    fun enroll(course: Course) {
+        enrolledCourses.add(course)
+        println("$name enrolled in ${course.getDetails()}")
+    }
+
+
+    fun printCourses() {
+        if (enrolledCourses.isEmpty()) {
+            println("$name is not enrolled in any courses.")
+        } else {
+            println("$name’s Courses:")
+            enrolledCourses.forEach { println(" - ${it.getDetails()}") }
+        }
+
+   }
+
+    fun getAge(): Int = age
+    fun setAge(newAge: Int) {
+        if (newAge >= 0) age = newAge
+    }
+
+}
+
+fun main() {
+    val math = Course("Calculus", "MATH101")
+    val physics = Course("Physics", "PHYS201")
+    val chemistry = Course("Chemistry", "CHEM301")
+
+    val student = Student("Emma", 19, "Physics")
+    student.enroll(math)
+
+   student.enroll(physics)
+
+   student.enroll(chemistry)
+
+   student.printCourses()
+
+}

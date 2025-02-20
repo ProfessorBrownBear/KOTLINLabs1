@@ -1,0 +1,104 @@
+class Bank {
+    // Private mutable map as the "database" - only accessible within this class
+    private val accounts = mutableMapOf<String, Double>(
+        "John" to 1000.0,    // Pre-populated account for John
+        "Alice" to 500.0     // Pre-populated account for Alice
+    )
+
+    // Public method to check if a customer has an account
+    fun hasAccount(customerName: String): Boolean {
+        return accounts.containsKey(customerName)
+    }
+
+    // Getter: Retrieve a customer's balance, returns 0.0 if not found
+    fun getBalance(customerName: String): Double {
+        return accounts[customerName] ?: 0.0  // Elvis operator provides default
+    }
+
+    // Setter: Update a customer's balance with validation to prevent negatives
+    fun setBalance(customerName: String, newBalance: Double) {
+        if (newBalance >= 0) {
+            accounts[customerName] = newBalance
+            println("Balance updated for $customerName: $$newBalance")
+        } else {
+            println("Error: Balance cannot be negative for $customerName")
+        }
+    }
+
+    // Method to handle withdrawals, uses getter for validation
+    fun withdraw(customerName: String, amount: Double): Boolean {
+        val currentBalance = getBalance(customerName)
+        return if (amount > 0 && currentBalance >= amount) {
+            setBalance(customerName, currentBalance - amount)  // Safe update
+            true
+        } else {
+            println("Error: Insufficient funds or invalid amount for $customerName")
+            false
+        }
+    }
+
+    // Method to handle deposits, ensures positive amounts
+    fun deposit(customerName: String, amount: Double) {
+        if (amount > 0) {
+            val currentBalance = getBalance(customerName)
+            setBalance(customerName, currentBalance + amount)  // Safe update
+        } else {
+            println("Error: Deposit amount must be positive for $customerName")
+        }
+    }
+}
+
+// Customer class interacts with the Bank object
+class Customer(private val name: String, private val bank: Bank) {
+    // Getter: Safely expose the customer's name
+    fun getName(): String = name
+
+    // Check if this customer has an account in the bank
+    fun checkAccount(): Boolean = bank.hasAccount(name)
+
+    // Perform banking operations if the account exists
+    fun performOperations() {
+        if (checkAccount()) {
+            println("Welcome, $name! Your balance is $${bank.getBalance(name)}")
+            println("Options: 1. Withdraw  2. Deposit  3. Exit")
+            val choice = readLine()?.toIntOrNull() ?: 3  // Default to exit on invalid input
+            when (choice) {
+                1 -> {
+                    println("Enter amount to withdraw:")
+                    val amount = readLine()?.toDoubleOrNull() ?: 0.0  // Handle invalid input
+                    bank.withdraw(name, amount)
+                    println("New balance: $${bank.getBalance(name)}")
+                }
+                2 -> {
+                    println("Enter amount to deposit:")
+                    val amount = readLine()?.toDoubleOrNull() ?: 0.0  // Handle invalid input
+                    bank.deposit(name, amount)
+                    println("New balance: $${bank.getBalance(name)}")
+                }
+                3 -> println("Goodbye, $name!")
+                else -> println("Invalid option")
+            }
+        } else {
+            println("Sorry, $name, you don’t have an account with us.")
+        }
+    }
+}
+
+// Main function to run the banking simulation
+fun main() {
+    val bank = Bank()  // Create a single Bank instance
+    var continueBanking = true  // Control the loop
+
+    println("=== Welcome to Simple Bank ===")
+    while (continueBanking) {
+        println("Enter your name (or 'exit' to quit):")
+        val input = readLine() ?: ""  // Get user input, default to empty string
+        if (input.lowercase() == "exit") {
+            continueBanking = false  // Exit condition
+        } else {
+            val customer = Customer(input, bank)  // Create Customer with Bank reference
+            customer.performOperations()  // Run banking operations
+        }
+    }
+    println("Thank you for banking with us!")
+}

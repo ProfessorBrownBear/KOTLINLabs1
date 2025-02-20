@@ -1,0 +1,223 @@
+fun main() {
+
+        // Declare variables with appropriate types
+        val name: String = "Liam"
+        var age: Int = 20
+        var gpa: Double = 3.2
+        val isEnrolled: Boolean = true
+
+        // Initial output
+        println("=== Student Profile ===")
+        println("Name: $name")
+        println("Age: $age")
+        println("GPA: $gpa")
+        println("Enrolled: $isEnrolled")
+
+        // Update mutable variables
+        age = 21
+        gpa = 3.4
+
+        // Updated output
+        println("\n=== Updated Profile ===")
+        println("Name: $name")
+        println("Age: $age")
+        println("GPA: $gpa")
+        println("Enrolled: $isEnrolled")
+
+}
+
+##Extended Code: Student Profile with Variable Type Reporting
+
+fun main() {
+    // Declare variables with appropriate types
+    val name = "Liam"             // Inferred as String
+    var age: Int = 20             // Explicitly typed as Int
+    var gpa = 3.2                 // Inferred as Double
+    val isEnrolled: Boolean = true // Explicitly typed as Boolean
+
+    // Initial output with type reporting
+    println("=== Student Profile ===")
+    println("Name: $name (Type: ${name::class.simpleName})")
+    println("Age: $age (Type: ${age::class.simpleName})")
+    println("GPA: $gpa (Type: ${gpa::class.simpleName})")
+    println("Enrolled: $isEnrolled (Type: ${isEnrolled::class.simpleName})")
+
+    // Update mutable variables
+    age = 21
+    gpa = 3.4
+
+    // Updated output with type reporting
+    println("\n=== Updated Profile ===")
+    println("Name: $name (Type: ${name::class.simpleName})")
+    println("Age: $age (Type: ${age::class.simpleName})")
+    println("GPA: $gpa (Type: ${gpa::class.simpleName})")
+    println("Enrolled: $isEnrolled (Type: ${isEnrolled::class.simpleName})")
+}
+Explanation of Extensions
+Type Reporting with ::class.simpleName:
+The ::class syntax in Kotlin accesses the class of a variable, and .simpleName retrieves a human-readable name of the type (e.g., String, Int, Double, Boolean).
+
+I added (Type: ${variable::class.simpleName}) to each println statement to display the variable’s type alongside its value.
+
+This helps students see both explicit types (e.g., age: Int) and inferred types (e.g., name as String) in action.
+
+Output Formatting:
+
+The output remains structured with separators (=== Student Profile === and \n=== Updated Profile ===) for clarity.
+
+Each line now includes both the value and type, making it easy to compare initial and updated states.
+No Logic Changes: The core functionality (declaring variables, updating mutable ones, and printing) stays the same—only the reporting is enhanced.
+
+Expected Output
+When you run this program, the output will look like this:
+
+=== Student Profile ===
+Name: Liam (Type: String)
+Age: 20 (Type: Int)
+GPA: 3.2 (Type: Double)
+Enrolled: true (Type: Boolean)
+
+=== Updated Profile ===
+Name: Liam (Type: String)
+Age: 21 (Type: Int)
+GPA: 3.4 (Type: Double)
+Enrolled: true (Type: Boolean)
+Further Extensions (Optional Enhancements)
+If you’d like to take this even further for the lab, here are some additional ideas with corresponding code snippets:
+
+1. Add a Function to Report Variable Details
+Create a helper function to reduce repetition and make type reporting more reusable.
+
+fun main() {
+    // Declare variables with appropriate types
+    val name = "Liam"
+    var age: Int = 20
+    var gpa = 3.2
+    val isEnrolled: Boolean = true
+
+    // Helper function to print variable details
+    fun printVar(label: String, value: Any) {
+        println("$label: $value (Type: ${value::class.simpleName})")
+    }
+
+    // Initial output
+    println("=== Student Profile ===")
+    printVar("Name", name)
+    printVar("Age", age)
+    printVar("GPA", gpa)
+    printVar("Enrolled", isEnrolled)
+
+    // Update mutable variables
+    age = 21
+    gpa = 3.4
+
+    // Updated output
+    println("\n=== Updated Profile ===")
+    printVar("Name", name)
+    printVar("Age", age)
+    printVar("GPA", gpa)
+    printVar("Enrolled", isEnrolled)
+}
+Benefit: Teaches students about functions while keeping the code DRY (Don’t Repeat Yourself).
+Output: Same as above, but the logic is more modular.
+2. Highlight Type Inference vs. Explicit Typing
+Add comments or additional output to emphasize where type inference occurs.
+
+
+
+fun main() {
+    // Declare variables with appropriate types
+    val name = "Liam"             // Type inferred as String
+    var age: Int = 20             // Explicitly declared as Int
+    var gpa = 3.2                 // Type inferred as Double
+    val isEnrolled: Boolean = true // Explicitly declared as Boolean
+
+    // Initial output with inference notes
+    println("=== Student Profile ===")
+    println("Name: $name (Type: ${name::class.simpleName}, Inferred)")
+    println("Age: $age (Type: ${age::class.simpleName}, Explicit)")
+    println("GPA: $gpa (Type: ${gpa::class.simpleName}, Inferred)")
+    println("Enrolled: $isEnrolled (Type: ${isEnrolled::class.simpleName}, Explicit)")
+
+    // Update mutable variables
+    age = 21
+    gpa = 3.4
+
+    // Updated output
+    println("\n=== Updated Profile ===")
+    println("Name: $name (Type: ${name::class.simpleName}, Inferred)")
+    println("Age: $age (Type: ${age::class.simpleName}, Explicit)")
+    println("GPA: $gpa (Type: ${gpa::class.simpleName}, Inferred)")
+    println("Enrolled: $isEnrolled (Type: ${isEnrolled::class.simpleName}, Explicit)")
+}
+Output:
+
+=== Student Profile ===
+Name: Liam (Type: String, Inferred)
+Age: 20 (Type: Int, Explicit)
+GPA: 3.2 (Type: Double, Inferred)
+Enrolled: true (Type: Boolean, Explicit)
+
+=== Updated Profile ===
+Name: Liam (Type: String, Inferred)
+Age: 21 (Type: Int, Explicit)
+GPA: 3.4 (Type: Double, Inferred)
+Enrolled: true (Type: Boolean, Explicit)
+Benefit: Reinforces the concept of type inference vs. explicit typing.
+3. Add a Type Mismatch Experiment
+Include a deliberate type mismatch to show Kotlin’s type safety.
+
+
+fun main() {
+    val name = "Liam"
+    var age: Int = 20
+    var gpa = 3.2
+    val isEnrolled: Boolean = true
+
+    println("=== Student Profile ===")
+    println("Name: $name (Type: ${name::class.simpleName})")
+    println("Age: $age (Type: ${age::class.simpleName})")
+    println("GPA: $gpa (Type: ${gpa::class.simpleName})")
+    println("Enrolled: $isEnrolled (Type: ${isEnrolled::class.simpleName})")
+
+    // Update mutable variables
+    age = 21
+    gpa = 3.4
+
+    println("\n=== Updated Profile ===")
+    println("Name: $name (Type: ${name::class.simpleName})")
+    println("Age: $age (Type: ${age::class.simpleName})")
+    println("GPA: $gpa (Type: ${gpa::class.simpleName})")
+    println("Enrolled: $isEnrolled (Type: ${isEnrolled::class.simpleName})")
+
+    // Experiment with type mismatch
+    println("\n=== Type Mismatch Experiment ===")
+    // Uncomment the line below to see the error
+    // age = 3.5  // Error: Type mismatch - Int cannot hold Double
+    println("Age is still: $age (Type: ${age::class.simpleName})")
+}
+
+Output (with the mismatch line commented out):
+
+=== Student Profile ===
+Name: Liam (Type: String)
+Age: 20 (Type: Int)
+GPA: 3.2 (Type: Double)
+Enrolled: true (Type: Boolean)
+
+=== Updated Profile ===
+Name: Liam (Type: String)
+Age: 21 (Type: Int)
+GPA: 3.4 (Type: Double)
+Enrolled: true (Type: Boolean)
+
+=== Type Mismatch Experiment ===
+Age is still: 21 (Type: Int)
+Benefit: Shows students how Kotlin protects against type errors.
+
+Final Thoughts
+The basic extended version (first code block) shows adding type reporting to the original program. 
+The optional enhancements provide additional learning opportunities, such as 
+modularity with functions, 
+explicit vs. inferred type distinctions, and 
+type safety exploration. 

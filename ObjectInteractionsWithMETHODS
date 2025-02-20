@@ -1,0 +1,114 @@
+// Course class from Lab 9 - represents a course a student takes
+class Course(val courseName: String, val courseCode: String) {
+    fun getDetails(): String {
+        return "$courseCode: $courseName"
+    }
+
+}
+
+
+// Student class with grade tracking - builds on Lab 9
+class Student(val name: String, private var age: Int, var major: String) {
+    private val enrolledCourses = mutableListOf<Course>()  // Composition: Student has-a list of Courses
+    private val grades = mutableMapOf<String, Int>()       // New: Tracks grades by course code
+
+    // Enroll in a course
+    fun enroll(course: Course) {
+        enrolledCourses.add(course)
+        println("$name enrolled in ${course.getDetails()}")
+    }
+
+
+    // Print enrolled courses
+    fun printCourses() {
+        if (enrolledCourses.isEmpty()) {
+            println("$name is not enrolled in any courses.")
+        } else {
+            println("$name’s Courses:")
+            enrolledCourses.forEach { 
+                val grade = grades[it.courseCode]?.toString() ?: "Not graded"
+                println(" - ${it.getDetails()} (Grade: $grade)") 
+            }
+
+        }
+
+    }
+
+
+    // Getter for age (encapsulation)
+    fun getAge(): Int = age
+
+    // Setter for age with validation
+    fun setAge(newAge: Int) {
+        if (newAge >= 0) age = newAge
+    }
+
+
+    // New: Setter for grade - called by Teacher
+    fun setGrade(courseCode: String, grade: Int) {
+        if (grade in 0..100) {
+            grades[courseCode] = grade
+            println("$name received grade $grade for $courseCode")
+        } else {
+            println("Error: Grade $grade for $courseCode is invalid (must be 0-100)")
+        }
+
+    }
+
+
+    // New: Getter for grade - allows Teacher to check
+    fun getGrade(courseCode: String): Int? = grades[courseCode]
+}
+
+
+// Teacher class - interacts with Student objects
+class Teacher(val name: String) {
+    // Method to assign a grade to a student for a specific course
+    fun assignGrade(student: Student, course: Course, grade: Int) {
+        // Pass the student object as a parameter and call its method
+        student.setGrade(course.courseCode, grade)
+        println("$name assigned $grade to ${student.name} for ${course.getDetails()}")
+    }
+
+
+    // Optional: Check a student's grade (demonstrates method call)
+    fun checkStudentGrade(student: Student, course: Course): String {
+        val grade = student.getGrade(course.courseCode)
+        return if (grade != null) {
+            "${student.name} has a grade of $grade in ${course.getDetails()}"
+        } else {
+            "${student.name} has no grade yet for ${course.getDetails()}"
+        }
+
+    }
+
+}
+
+
+// Main function to simulate object interactions
+fun main() {
+    // Create courses
+    val math = Course("Calculus", "MATH101")
+    val physics = Course("Physics", "PHYS201")
+
+    // Create a student and enroll them in courses
+    val student = Student("Emma", 19, "Physics")
+    student.enroll(math)
+
+    student.enroll(physics)
+
+
+    // Create a teacher
+    val teacher = Teacher("Dr. Smith")
+
+    // Teacher assigns grades to the student
+    teacher.assignGrade(student, math, 85)
+    teacher.assignGrade(student, physics, 92)
+
+    // Print the student's courses with grades
+    student.printCourses()
+
+    // Teacher checks a grade
+    println(teacher.checkStudentGrade(student, math))
+
+}

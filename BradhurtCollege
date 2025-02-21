@@ -1,0 +1,178 @@
+//  Object Oriented Analysis and Design Document
+//  https://docs.google.com/document/d/1oNQ4UV-xq6WWP7O85RnXRy07wrpYtBQaVf8p3KMkBdQ/edit?usp=sharing
+
+import kotlin.random.Random
+
+// 1. Inheritance: Base class for all entities in the system
+open class Entity(val id: String) {
+    open fun describe(): String {
+        return "Entity ID: $id"
+    }
+}
+
+// 2. Composition and Inheritance: Course class inherits from Entity, contains no mutable lists directly
+class Course(val name: String, val code: String, var credits: Int) : Entity(name) {  // Added 'val' to name
+    init {
+        require(credits > 0) { "Credits must be positive" }
+    }
+
+    fun getDetails(): String {
+        return "$name ($code, $credits credits)"  // Now 'name' is resolved as a property
+    }
+
+    override fun describe(): String {
+        return "${super.describe()}, Course: ${getDetails()}"
+    }
+}
+
+// 3. Composition and Inheritance: Student class inherits from Entity, contains a mutable list of courses
+class Student(name: String, private var age: Int) : Entity(name) {
+    private val enrolledCourses = mutableListOf<Course>()  // Composition: Student "has-a" list of Courses
+
+    init {
+        require(age >= 0) { "Age cannot be negative" }
+    }
+
+    // Public method to add a course (for Registrar to use)
+    fun enroll(course: Course) {
+        enrolledCourses.add(course)
+        println("${getName()} enrolled in ${course.getDetails()}")
+    }
+
+    // Public method to get courses (for passing to Registrar or printing)
+    fun getEnrolledCourses(): MutableList<Course> = enrolledCourses
+
+    // Getter for name (encapsulation)
+    fun getName(): String = id
+
+    // Getter and setter for age (encapsulation)
+    fun getAge(): Int = age
+    fun setAge(newAge: Int) { if (newAge >= 0) age = newAge }
+
+    override fun describe(): String {
+        return "${super.describe()}, Age: $age, Courses: ${enrolledCourses.size}"
+    }
+}
+
+// 4. Composition: Catalog class manages a mutable list of courses
+class Catalog {
+    private val courses = mutableListOf<Course>()
+
+    // Add a course to the catalog
+    fun addCourse(course: Course) {
+        courses.add(course)
+        println("Added ${course.getDetails()} to catalog")
+    }
+
+    // Get courses (mutable list passed to other objects)
+    fun getCourses(): MutableList<Course> = courses
+}
+
+// 5. Composition: StudentRegistry manages a mutable list of students
+class StudentRegistry {
+    private val students = mutableListOf<Student>()
+
+    // Add a student to the registry
+    fun addStudent(student: Student) {
+        students.add(student)
+        println("Added ${student.getName()} to registry")
+    }
+
+    // Get students (mutable list passed to other objects)
+    fun getStudents(): MutableList<Student> = students
+
+    // Print schedules for all students
+    fun printAllSchedules() {
+        students.forEach { student ->
+            println("\nSchedule for ${student.getName()}:")
+            if (student.getEnrolledCourses().isEmpty()) {
+                println("${student.getName()} has no enrolled courses.")
+            } else {
+                student.getEnrolledCourses().forEach { course ->
+                    println(" - ${course.getDetails()}")
+                }
+            }
+        }
+    }
+
+    // Print schedule for a specific student
+    fun printStudentSchedule(studentName: String) {
+        val student = students.find { it.getName() == studentName }
+        if (student != null) {
+            println("\nSchedule for $studentName:")
+            if (student.getEnrolledCourses().isEmpty()) {
+                println("$studentName has no enrolled courses.")
+            } else {
+                student.getEnrolledCourses().forEach { course ->
+                    println(" - ${course.getDetails()}")
+                }
+            }
+        } else {
+            println("Student $studentName not found in registry.")
+        }
+    }
+}
+
+// 6. Composition: Registrar acts as the controller for use cases
+class Registrar {
+    private val catalog = Catalog()
+    private val registry = StudentRegistry()
+
+    // Use Case 1: Enroll a student in a course
+    fun enrollStudent(studentName: String, courseCode: String, credits: Int = 3) {
+        val student = registry.getStudents().find { it.getName() == studentName }
+        val course = catalog.getCourses().find { it.code == courseCode }
+        if (student != null && course != null) {
+            student.enroll(course)
+        } else {
+            println("Error: Student $studentName or Course $courseCode not found.")
+        }
+    }
+
+    // Use Case 2: Print schedule for all students
+    fun printAllSchedules() {
+        registry.printAllSchedules()
+    }
+
+    // Use Case 3: Print schedule for one specific student
+    fun printStudentSchedule(studentName: String) {
+        registry.printStudentSchedule(studentName)
+    }
+
+    // Initialize catalog and registry with sample data
+    fun initialize() {
+        // Add courses to catalog
+        catalog.addCourse(Course("Introduction to Programming", "CS101", 4))
+        catalog.addCourse(Course("Calculus I", "MATH101", 3))
+        catalog.addCourse(Course("History of Art", "ART201", 4))
+        catalog.addCourse(Course("Physics I", "PHY101", 3))
+        catalog.addCourse(Course("English Literature", "ENG101", 3))
+        catalog.addCourse(Course("Economics", "ECON101", 3))
+
+        // Add students to registry
+        registry.addStudent(Student("Alice", 20))
+        registry.addStudent(Student("Bob", 22))
+        registry.addStudent(Student("Charlie", 19))
+    }
+}
+
+// Main function to demonstrate use cases
+fun main() {
+    val registrar = Registrar()
+    registrar.initialize()
+
+    // Use Case 1: Enroll 3 students in varying ways across 6 courses
+    registrar.enrollStudent("Alice", "CS101")  // Alice enrolls in Introduction to Programming
+    registrar.enrollStudent("Alice", "MATH101")  // Alice enrolls in Calculus I
+    registrar.enrollStudent("Bob", "ART201")    // Bob enrolls in History of Art
+    registrar.enrollStudent("Bob", "PHY101")    // Bob enrolls in Physics I
+    registrar.enrollStudent("Charlie", "ENG101") // Charlie enrolls in English Literature
+    registrar.enrollStudent("Charlie", "ECON101") // Charlie enrolls in Economics
+    registrar.enrollStudent("Charlie", "CS101")  // Charlie enrolls in Introduction to Programming (3 courses total)
+
+    // Use Case 2: Print schedule for all students
+    registrar.printAllSchedules()
+
+    // Use Case 3: Print schedule for one specific student
+    registrar.printStudentSchedule("Alice")
+}
